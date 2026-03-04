@@ -1,15 +1,15 @@
 ---
 name: report-download
 description: >
-  **Snowball Report Downloader**: Auto-search and download A-share/HK stock financial report PDFs from Xueqiu (stockn.xueqiu.com).
-  - MANDATORY TRIGGERS: download report, 下载财报, 下载年报, 下载中报, annual report download, financial report PDF, 雪球财报
+  **Financial Report Downloader**: Auto-search and download A-share/HK stock financial report PDFs from Xueqiu (stockn.xueqiu.com) or 同花顺 (notice.10jqka.com.cn).
+  - MANDATORY TRIGGERS: download report, 下载财报, 下载年报, 下载中报, annual report download, financial report PDF, 雪球财报, 同花顺财报
 
 version: 0.1.0
 ---
 
-# Snowball Financial Report PDF Downloader
+# Financial Report PDF Downloader
 
-Download A-share and Hong Kong stock financial report PDFs from `stockn.xueqiu.com`. This source has no anti-crawl protection, enabling reliable automated downloads.
+Download A-share and Hong Kong stock financial report PDFs from `stockn.xueqiu.com` (雪球) with `notice.10jqka.com.cn` (同花顺) as fallback. Both sources enable reliable automated downloads.
 
 ## Workflow
 
@@ -56,11 +56,16 @@ Use **WebSearch** with this query pattern:
 **HK:** `site:stockn.xueqiu.com {formatted_code} {hk_search_keyword} {year}`
 
 If no year specified: try current year first, then previous year.
-If no results with `site:` prefix: retry without it as fallback.
+If no results from Xueqiu:
+1. Retry with **同花顺**: `site:notice.10jqka.com.cn {formatted_code} {search_keyword} {year}`
+   - Can also try with company name, e.g.: `site:notice.10jqka.com.cn 伊利股份 2024 年度报告`
+2. If still no results: retry without any `site:` prefix as a last resort.
 
 ## Step 2: Extract PDF Links
 
-Filter search results for URLs matching: `https://stockn.xueqiu.com/.../*.pdf`
+Filter search results for PDF URLs from supported sources:
+- `https://stockn.xueqiu.com/.../*.pdf`
+- `https://notice.10jqka.com.cn/.../*.pdf`
 
 ## Step 3: Identify Correct Report
 

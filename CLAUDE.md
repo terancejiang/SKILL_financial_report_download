@@ -1,6 +1,6 @@
-# Snowball Report Download (雪球财报下载)
+# Financial Report Download (财报下载)
 
-A Claude Code skill that searches and downloads A-share/HK stock financial report PDFs from `stockn.xueqiu.com`.
+A Claude Code skill that searches and downloads A-share/HK stock financial report PDFs from `stockn.xueqiu.com` (雪球) with `notice.10jqka.com.cn` (同花顺) as fallback.
 
 ## Quick Start
 
@@ -39,7 +39,7 @@ Arguments: `<stock_code> [year] [report_type]`
 
 ## Notes
 
-- `stockn.xueqiu.com` serves PDFs without anti-crawl restrictions
+- Primary source: `stockn.xueqiu.com` (no anti-crawl); fallback: `notice.10jqka.com.cn` (同花顺)
 - The Python script validates PDF magic bytes and retries with backoff on failure
 - Supported markets: A-share (SH/SZ), Hong Kong
 - Supported report types: 年报, 中报, 一季报, 三季报 (A-share); annual, interim (HK)

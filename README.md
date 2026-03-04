@@ -1,6 +1,6 @@
-# 雪球财报下载工具 (Snowball Report Downloader)
+# 财报下载工具 (Financial Report Downloader)
 
-基于 [雪球 stockn.xueqiu.com](https://stockn.xueqiu.com) 的上市公司财报 PDF 自动搜索与下载工具，可通过 [Claude Code](https://claude.com/claude-code) 斜杠命令或 Claude 插件两种方式使用。
+上市公司财报 PDF 自动搜索与下载工具，支持 [雪球](https://stockn.xueqiu.com)（主源）和 [同花顺](https://notice.10jqka.com.cn)（备选源），可通过 [Claude Code](https://claude.com/claude-code) 斜杠命令或 Claude 插件两种方式使用。
 
 ## 使用方法
 
@@ -66,7 +66,7 @@
 ```json
 {
   "plugins": [
-    "/absolute/path/to/SKILL_snowball_report_download"
+    "/absolute/path/to/SKILL_financial_report_download"
   ]
 }
 ```
@@ -105,13 +105,13 @@ pip install -r requirements.txt
 ## 工作流程
 
 1. **输入解析**：解析股票代码、年份、报告类型，自动识别市场并格式化代码
-2. **搜索报告**：通过 WebSearch 在 `stockn.xueqiu.com` 搜索匹配的财报 PDF
+2. **搜索报告**：通过 WebSearch 在 `stockn.xueqiu.com` 搜索，无结果时回退到 `notice.10jqka.com.cn`（同花顺）
 3. **筛选结果**：排除摘要、审计报告等非正文文件，选择最匹配的 PDF
 4. **下载文件**：通过 Python 脚本流式下载，支持重试和 PDF 格式校验
 
 ## 注意事项
 
-
+- 搜索优先使用雪球（`stockn.xueqiu.com`），无结果时回退到同花顺（`notice.10jqka.com.cn`）
 - 下载脚本会验证 PDF 文件头（`%PDF-` magic bytes）
 - 文件小于 100KB 时会发出警告（可能为异常文件）
 - 下载超时 120 秒，最多重试 3 次（渐进式退避）

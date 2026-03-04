@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-雪球财报PDF下载工具 (Snowball Financial Report PDF Downloader)
+财报PDF下载工具 (Financial Report PDF Downloader)
 
-从 stockn.xueqiu.com 下载A股/港股财报PDF文件。
+从 stockn.xueqiu.com 或 notice.10jqka.com.cn 下载A股/港股财报PDF文件。
 支持年报、中报、一季报、三季报。
 
 Usage:
@@ -35,28 +35,38 @@ DOWNLOAD_TIMEOUT = 120
 DEFAULT_MAX_RETRIES = 3
 BACKOFF_BASE = 3  # seconds
 
-HEADERS = {
+BASE_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/120.0.0.0 Safari/537.36"
     ),
-    "Referer": "https://xueqiu.com/",
     "Accept": "application/pdf,application/octet-stream,*/*",
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
 }
 
 URL_PATTERN = re.compile(
-    r"^https://stockn\.xueqiu\.com/.+\.pdf$", re.IGNORECASE
+    r"^https?://(stockn\.xueqiu\.com|[\w.-]*10jqka\.com\.cn)/.+\.pdf$",
+    re.IGNORECASE,
 )
+
+
+def get_headers(url):
+    """Return headers with Referer matching the URL domain."""
+    headers = dict(BASE_HEADERS)
+    if "10jqka.com.cn" in url:
+        headers["Referer"] = "https://10jqka.com.cn/"
+    else:
+        headers["Referer"] = "https://xueqiu.com/"
+    return headers
 
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(
-        description="Download financial report PDF from stockn.xueqiu.com"
+        description="Download financial report PDF from stockn.xueqiu.com or 10jqka.com.cn"
     )
     parser.add_argument(
-        "--url", required=True, help="PDF URL from stockn.xueqiu.com"
+        "--url", required=True, help="PDF URL from stockn.xueqiu.com or 10jqka.com.cn"
     )
     parser.add_argument(
         "--stock-code", required=True, help="Stock code (e.g. SH600887, 00700)"
@@ -82,11 +92,11 @@ def parse_args(argv=None):
 
 
 def validate_url(url):
-    """Validate that the URL points to stockn.xueqiu.com and ends with .pdf."""
+    """Validate that the URL points to a supported source and ends with .pdf."""
     if not URL_PATTERN.match(url):
         return False, (
             f"Invalid URL: {url}\n"
-            "URL must match https://stockn.xueqiu.com/.../*.pdf"
+            "URL must be a .pdf link from stockn.xueqiu.com or 10jqka.com.cn"
         )
     return True, ""
 
@@ -122,7 +132,7 @@ def download_annual_report(url, save_path, max_retries=DEFAULT_MAX_RETRIES):
 
             response = requests.get(
                 url,
-                headers=HEADERS,
+                headers=get_headers(url),
                 timeout=DOWNLOAD_TIMEOUT,
                 stream=True,
             )
