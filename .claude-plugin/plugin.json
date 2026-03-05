@@ -1,0 +1,10 @@
+{
+  "name": "financial-report-download",
+  "description": "A股/港股财报 PDF 自动下载工具，支持雪球和同花顺双数据源",
+  "version": "0.1.0",
+  "author": {
+    "name": "terancejiang"
+  },
+  "repository": "https://github.com/terancejiang/SKILL_financial_report_download",
+  "keywords": ["finance", "financial-report", "A-share", "HK-stock", "xueqiu", "10jqka", "PDF"]
+}
